@@ -1,0 +1,20 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(30,30)">
+    <!-- Outer circle -->
+    <circle cx="0" cy="0" r="26" fill="none" stroke="#2d5f2e" stroke-width="2"/>
+    <!-- Compass arms -->
+    <polygon points="0,-18 4,0 0,2" fill="#2d5f2e"/>
+    <polygon points="0,18 -4,0 0,-2" fill="#2d5f2e"/>
+    <polygon points="18,0 0,4 0,-2" fill="#2d5f2e"/>
+    <polygon points="-18,0 0,-4 0,2" fill="#2d5f2e"/>
+    <!-- Inner circle -->
+    <circle cx="0" cy="0" r="6" fill="#2d5f2e"/>
+    <!-- Cardinal markers -->
+    <rect x="-1" y="-28" width="2" height="4" fill="#2d5f2e"/>
+    <rect x="-1" y="24" width="2" height="4" fill="#2d5f2e"/>
+    <rect x="24" y="-1" width="4" height="2" fill="#2d5f2e"/>
+    <rect x="-28" y="-1" width="4" height="2" fill="#2d5f2e"/>
+  </g>
+  <!-- Brand text -->
+  <text x="70" y="36" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="20" font-weight="700" letter-spacing="1" fill="#ffffff">STONE ISLAND</text>
+</svg>
