@@ -37,6 +37,7 @@ body {
   left: 0;
   width: 100%;
   background-color: rgba(10, 10, 10, 0.92);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   z-index: 1000;
   padding: 16px 0;
@@ -309,6 +310,7 @@ section {
   padding: 24px;
   text-align: center;
   transition: var(--transition);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
 
@@ -465,6 +467,7 @@ section {
   border-radius: 14px;
   padding: 28px;
   transition: var(--transition);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
 
@@ -558,6 +561,140 @@ section {
 .brands-footer p:last-child {
   color: var(--text-lighter);
   font-weight: 500;
+}
+
+/* Trust Info Popover */
+.trust-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+  vertical-align: middle;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(45, 95, 46, 0.3);
+}
+
+.trust-info-btn:hover,
+.trust-info-btn:focus-visible {
+  background: var(--accent-dark);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.trust-info-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 1100;
+  pointer-events: none;
+}
+
+.trust-info-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+@media (max-width: 600px) {
+  .trust-info-backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.trust-info-popover {
+  position: fixed;
+  max-width: 320px;
+  width: 320px;
+  background: var(--dark-light);
+  border: 1px solid rgba(45, 95, 46, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: var(--transition);
+  z-index: 1200;
+}
+
+.trust-info-popover.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.trust-info-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(45, 95, 46, 0.2);
+  color: var(--white);
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.trust-info-close:hover,
+.trust-info-close:focus-visible {
+  background: var(--accent);
+  color: var(--white);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.trust-info-popover p {
+  font-size: 15px;
+  color: var(--text-light);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.trust-info-popover p:last-child {
+  margin-bottom: 0;
+}
+
+.trust-info-popover strong {
+  color: var(--text-lighter);
+}
+
+@media (max-width: 600px) {
+  .trust-info-popover {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -45%);
+    width: calc(100% - 40px);
+    max-width: 360px;
+  }
+
+  .trust-info-popover.active {
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* How */
@@ -730,11 +867,27 @@ section {
   .steps {
     grid-template-columns: 1fr 1fr;
   }
+
+  /* Short viewports (landscape phones): avoid excessive hero height */
+  @media (max-height: 700px) {
+    .hero {
+      height: auto;
+      min-height: 500px;
+    }
+  }
 }
 
 @media (max-width: 600px) {
   .menu-toggle {
     display: block;
+    padding: 12px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  section {
+    padding: 60px 0;
+    min-height: auto;
   }
 
   .nav {
@@ -790,5 +943,60 @@ section {
 
   .hero-content {
     padding: 0 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .cta-btn {
+    padding: 14px 36px;
+    font-size: 16px;
+  }
+
+  .section-title {
+    font-size: 24px;
+  }
+
+  .brands-grid {
+    gap: 16px;
+  }
+
+  .brand-card {
+    padding: 20px;
+  }
+
+  .brand-description {
+    font-size: 13px;
+  }
+
+  .step-number {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .contact-grid {
+    gap: 24px;
+  }
+
+  .qr-code img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .contact-item {
+    font-size: 15px;
   }
 }

@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (nav.classList.contains('active')) {
           nav.classList.remove('active');
           menuToggle.classList.remove('active');
+          document.body.style.overflow = '';
         }
       }
     });
@@ -27,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
       e.stopPropagation();
       nav.classList.toggle('active');
       this.classList.toggle('active');
+      // Lock/unlock body scroll to prevent background scrolling
+      document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
     });
 
     // Close menu when clicking outside
@@ -36,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (nav.classList.contains('active') && !isClickInsideNav && !isClickOnToggle) {
         nav.classList.remove('active');
         menuToggle.classList.remove('active');
+        document.body.style.overflow = '';
       }
     });
   }
@@ -61,6 +65,153 @@ document.addEventListener('DOMContentLoaded', function() {
       observer.observe(el);
     }
   });
+
+  // Trust Info Popover — reusable component
+  (function() {
+    var triggers = document.querySelectorAll('[data-trust-trigger]');
+    var popover = document.querySelector('[data-trust-popover]');
+    var backdrop = document.querySelector('[data-trust-backdrop]');
+
+    if (!popover || !backdrop) return;
+
+    var activeTrigger = null;
+    var resizeHandler = null;
+
+    function isMobile() {
+      return window.innerWidth <= 600;
+    }
+
+    function positionPopover() {
+      if (!activeTrigger || isMobile()) return;
+
+      var rect = activeTrigger.getBoundingClientRect();
+      var popoverWidth = 320;
+      var popoverHeight = popover.offsetHeight;
+
+      var top = rect.bottom + 12;
+      var left = rect.left + (rect.width / 2) - (popoverWidth / 2);
+
+      var vw = window.innerWidth;
+      var vh = window.innerHeight;
+
+      // Keep within viewport horizontally
+      var minX = 16;
+      var maxX = vw - popoverWidth - 16;
+      if (left < minX) left = minX;
+      if (left > maxX) left = maxX;
+
+      // If popover would overflow bottom, open above trigger
+      if (top + popoverHeight > vh - 16) {
+        top = rect.top - popoverHeight - 12;
+      }
+      if (top < 16) top = 16;
+
+      popover.style.top = Math.round(top) + 'px';
+      popover.style.left = Math.round(left) + 'px';
+    }
+
+    function open(button) {
+      // Close mobile nav if open
+      var nav = document.getElementById('nav');
+      var menuToggle = document.getElementById('menuToggle');
+      if (nav && nav.classList.contains('active')) {
+        nav.classList.remove('active');
+        if (menuToggle) menuToggle.classList.remove('active');
+      }
+
+      activeTrigger = button;
+      popover.classList.add('active');
+      popover.setAttribute('aria-hidden', 'false');
+      button.setAttribute('aria-expanded', 'true');
+      backdrop.classList.add('active');
+
+      if (isMobile()) {
+        document.body.style.overflow = 'hidden';
+        popover.style.top = '';
+        popover.style.left = '';
+      } else {
+        positionPopover();
+      }
+
+      document.addEventListener('keydown', onKeydown);
+      document.addEventListener('click', onOutsideClick);
+
+      // Reposition on resize
+      if (!resizeHandler) {
+        resizeHandler = function() {
+          if (popover.classList.contains('active')) {
+            if (isMobile()) {
+              document.body.style.overflow = 'hidden';
+              popover.style.top = '';
+              popover.style.left = '';
+            } else {
+              if (!nav || !nav.classList.contains('active')) {
+                document.body.style.overflow = '';
+              }
+              positionPopover();
+            }
+          }
+        };
+        window.addEventListener('resize', resizeHandler);
+      }
+    }
+
+    function close() {
+      popover.classList.remove('active');
+      popover.setAttribute('aria-hidden', 'true');
+      if (activeTrigger) {
+        activeTrigger.setAttribute('aria-expanded', 'false');
+      }
+      backdrop.classList.remove('active');
+
+      // Only unlock body scroll if mobile menu isn't also open
+      var nav = document.getElementById('nav');
+      if (!nav || !nav.classList.contains('active')) {
+        document.body.style.overflow = '';
+      }
+
+      document.removeEventListener('keydown', onKeydown);
+      document.removeEventListener('click', onOutsideClick);
+
+      if (resizeHandler) {
+        window.removeEventListener('resize', resizeHandler);
+        resizeHandler = null;
+      }
+
+      if (activeTrigger) {
+        activeTrigger.focus();
+      }
+      activeTrigger = null;
+    }
+
+    function onKeydown(e) {
+      if (e.key === 'Escape') {
+        close();
+      }
+    }
+
+    function onOutsideClick(e) {
+      if (!popover.contains(e.target) && !backdrop.contains(e.target) && e.target !== activeTrigger) {
+        close();
+      }
+    }
+
+    triggers.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (popover.classList.contains('active')) {
+          close();
+        } else {
+          open(this);
+        }
+      });
+    });
+
+    var closeBtn = popover.querySelector('.trust-info-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', close);
+    }
+  })();
 });
 
 // Close menu on resize if screen gets larger
@@ -70,5 +221,6 @@ window.addEventListener('resize', function() {
   if (window.innerWidth > 600) {
     nav.classList.remove('active');
     menuToggle.classList.remove('active');
+    document.body.style.overflow = '';
   }
 });
